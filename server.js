@@ -1,10 +1,17 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 
 dotenv.config();
 
 const app = express();
+
+const corsOptions = {
+  origin: ["http://localhost:5173"],
+};
+
+app.use(cors(corsOptions));
 
 const schema = {
   description: "List of movies",
@@ -37,7 +44,7 @@ const model = genAI.getGenerativeModel({
   },
 });
 
-app.get("/", async (req, res) => {
+app.get("/api/get-movies", async (req, res) => {
   try {
     const query = req.query["query"];
     const genre = req.query["genre"];
