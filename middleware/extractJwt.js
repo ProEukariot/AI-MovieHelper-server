@@ -11,6 +11,7 @@ const extractJwt = (req, _, next) => {
       return next();
     }
     req.user = user;
+
     return next();
   });
 };

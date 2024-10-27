@@ -2,12 +2,15 @@ import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import bodyParser from "body-parser";
 
 import passport from "passport";
+import jwtStrategy from "./strategies/jwt-strategy.js";
 import googleAuthStrategy from "./strategies/google-strategy.js";
 
 import authRoute from "./routes/auth.js";
 import moviesRoute from "./routes/movies.js";
+import userRoute from "./routes/user.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
@@ -17,12 +20,15 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(bodyParser.json());
 
 passport.use(googleAuthStrategy);
+passport.use(jwtStrategy);
 app.use(passport.initialize());
 
 app.use("/api/auth", authRoute);
 app.use("/api", moviesRoute);
+app.use("/api", userRoute);
 
 app.use(errorHandler);
 

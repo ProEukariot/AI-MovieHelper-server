@@ -1,6 +1,8 @@
 import express from "express";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import extractJwt from "../middleware/extractJwt.js";
+import User from "../schemas/User.js";
+import tryCatch from "../utils/tryCatch.js";
 
 const router = express.Router();
 
@@ -35,28 +37,35 @@ const model = genAI.getGenerativeModel({
   },
 });
 
-router.get("/api/get-movies", extractJwt, async (req, res) => {
-  try {
+router.get(
+  "/get-movies",
+  extractJwt,
+  tryCatch(async (req, res, next) => {
+    const user = await User.findOne({ googleId: req.user.googleId });
+
     const query = req.query["query"];
     const genre = req.query["genre"];
     const mood = req.query["mood"];
     const type = req.query["type"];
 
-    const prompt = `List three popular movies. Movie must be of 
+    let prompt = `List three popular movies. Movie must be of 
       ${genre || "any"} genre,
        ${mood || "any"} mood,
        ${type || "any"} type. 
-       Movie must satisfy this requirement: ${query || "any"}`;
+       Movie must satisfy this requirement: ${query || "any"};`;
+
+    if (user && user.avoidMovies.length > 0) {
+      prompt = `${prompt} Do not include these movies in the output: ${user.avoidMovies.join(
+        ", "
+      )}.`;
+    }
 
     const result = await model.generateContent(prompt);
 
     const text = result.response.text();
 
     return res.json(JSON.parse(text));
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json(err);
-  }
-});
+  })
+);
 
 export default router;

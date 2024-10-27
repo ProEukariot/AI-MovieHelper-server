@@ -61,7 +61,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:1.20.3":
+"body-parser@npm:1.20.3, body-parser@npm:^1.20.3":
   version: 1.20.3
   resolution: "body-parser@npm:1.20.3"
   dependencies:
@@ -884,6 +884,7 @@ __metadata:
   resolution: "server@workspace:."
   dependencies:
     "@google/generative-ai": "npm:^0.20.0"
+    body-parser: "npm:^1.20.3"
     cors: "npm:^2.8.5"
     dotenv: "npm:^16.4.5"
     express: "npm:^4.21.0"

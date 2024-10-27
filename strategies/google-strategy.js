@@ -9,9 +9,6 @@ export default new GoogleStrategy(
     scope: ["email", "profile"],
   },
   async (accessToken, refreshToken, profile, done) => {
-    // console.log("CALLBACK");
-    // console.log(accessToken, refreshToken, profile);
-
     try {
       let user = await User.findOne({ googleId: profile.id });
 
