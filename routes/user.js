@@ -21,6 +21,8 @@ router
   .put(
     tryCatch(async (req, res) => {
       const newList = req.body.movies;
+      if (!newList) return res.status(400).send();
+      console.log(newList);
 
       const user = await User.findOne({ _id: req.user.id });
 

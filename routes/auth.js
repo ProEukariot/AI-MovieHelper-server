@@ -8,7 +8,10 @@ router.get("/google", passport.authenticate("google"));
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", { session: false }),
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: "http://localhost:5173/login/failure",
+  }),
   (req, res) => {
     const tokenProps = { expiresIn: "1h" };
 
@@ -18,10 +21,16 @@ router.get(
       tokenProps
     );
 
-    return res.json({
+    const data = {
       token: token,
       user: req.user,
-    });
+    };
+
+    const encodedData = btoa(JSON.stringify(data));
+
+    const url = `http://localhost:5173/login/success?data=${encodedData}`;
+
+    return res.redirect(url);
   }
 );
 

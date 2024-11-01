@@ -41,7 +41,9 @@ router.get(
   "/get-movies",
   extractJwt,
   tryCatch(async (req, res, next) => {
-    const user = await User.findOne({ googleId: req.user.googleId });
+    const user = req.user
+      ? await User.findOne({ googleId: req.user.googleId })
+      : null;
 
     const query = req.query["query"];
     const genre = req.query["genre"];
