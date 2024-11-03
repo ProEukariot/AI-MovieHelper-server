@@ -2,6 +2,7 @@ import express from "express";
 import passport from "passport";
 import User from "../schemas/User.js";
 import tryCatch from "../utils/tryCatch.js";
+import { getOrSetCache } from "../utils/getOrSetCache.js";
 
 const router = express.Router();
 
@@ -11,8 +12,10 @@ router
   .route("/user/avoid-movies")
   .get(
     tryCatch(async (req, res) => {
-      const movies = await User.findOne({ _id: req.user.id }).select(
-        "avoidMovies -_id"
+      const movies = await getOrSetCache(
+        `user-movies:${req.user.id}`,
+        async () =>
+          await User.findOne({ _id: req.user.id }).select("avoidMovies -_id")
       );
 
       res.json({ movies });
